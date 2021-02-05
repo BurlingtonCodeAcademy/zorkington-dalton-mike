@@ -38,6 +38,12 @@ let stick = new Item(
   true
 );
 
+let bucket = new Item("bucket", 
+"Could be used to get water from a well", 
+true);
+
+let rock = new Item("rock", "Seems to be sharp may be useful", )
+
 async function start() {
   console.log(
     `You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.`
@@ -45,7 +51,7 @@ async function start() {
   meadowRoom();
 }
 async function meadowRoom() {
-  let roomInv = [];
+  let meadowRoomInv = [];
   let userAnswer = await ask(
     `A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n_`
   );
@@ -53,6 +59,7 @@ async function meadowRoom() {
     userAnswer = await ask("I cant go that way..\n");
   }
   if (userAnswer === "n") {
+    console.log("You approach a lake");
     lakeRoom();
   } else if (userAnswer === "s") {
     riverRoom();
@@ -60,99 +67,111 @@ async function meadowRoom() {
 }
 
 async function riverRoom() {
-  let roomInv = [];
+  let riverRoomInv = {};
   userAnswer = await ask(
     "There seems to be a massive river, obstructing all movement except to the north \n"
   );
   while (userAnswer !== "n") {
     userAnswer = await ask("I cant go that way..\n");
-  } if (userAnswer === "n") {
+  }
+  if (userAnswer === "n") {
     meadowRoom();
   }
 }
 
+lakeRoomInv = { stick: stick };
 async function lakeRoom() {
-  roomInv = [stick];
-  let userAnswer = await ask("You approach a lake\n_");
-  if (userAnswer === "look around") {
-    userAnswer = await ask("You see a stick\n");
-    if (userAnswer === "take" || userAnswer === "add") {
+  let userAnswer = await ask("_");
+  if (userAnswer === "look around" && Object.keys(lakeRoomInv).length !== 0) {
+    let investigate = Object.keys(lakeRoomInv);
+    console.log(`You see a ${investigate}\n`);
+    return lakeRoom();
+  } else if (userAnswer === "take" && Object.keys(lakeRoomInv).length === 0) {
+    console.log("There's nothing here..");
+    return lakeRoom();
+  }
+
+  if (userAnswer === "take" || userAnswer === "add") {
+    let userAnswer = await ask("take what?\n_");
+    if (userAnswer === "stick") {
       stick.take();
-      return;
+      delete lakeRoomInv.stick;
+      return lakeRoom();
     }
   } else if (userAnswer === "drink") {
     console.log("The water is tainted and made you ill. You died, loser!");
     process.exit();
   } else if (userAnswer === "i") {
-    await ask(playerInventory);
-  }
-  else if (userAnswer === "w"){
+    console.log(playerInventory);
+    return;
+  } else if (userAnswer === "w") {
     puzzleRoom();
-  }
-  else if (userAnswer === "s"){
-    meadowRoom()
-  }
-  else {
-    userAnswer === await ask ("I cant go that way..\n")
+    console.log(
+      "You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree."
+    );
+  } else if (userAnswer === "s") {
+    meadowRoom();
+  } else {
+    userAnswer === (await ask("I cant go that way..\n"));
   }
 }
 
 async function puzzleRoom() {
-  userAnswer = await ask(
-    "You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree.\n"
-  );
-  if (userAnswer === "look around") {
-    console.log("It appears to be a bucket, must go to a well.");
+  let puzzleRoomInv = { bucket: bucket };
+  userAnswer = await ask("_");
+  if (userAnswer === "look around" && Object.keys(puzzleRoomInv).length !== 0) {
+    let investigate = Object.keys(puzzleRoomInv);
+    console.log(`You see a ${investigate} must go to a well`);
+    return puzzleRoom();
+  }
+  if (userAnswer === "take" || userAnswer === "add") {
+    let userAnswer = await ask("take what?\n_");
+    if (userAnswer === "bucket") {
+      bucket.take();
+      delete puzzleRoomInv.bucket;
+      return puzzleRoom();
+    }
   } else if (userAnswer === "n") {
-    deadEndRoom()
+    deadEndRoom();
+  } else if (userAnswer === "s") {
+    wellRoom();
   } else if (userAnswer === "e") {
-    lakeRoom()
-  }
-  else if (userAnswer === "s"){
-    wellRoom()
-  }
-  else {
-    userAnswer === await ask("I cant go that way..\n")
+    lakeRoom();
+    console.log("You approach a lake.");
+  } else {
+    userAnswer = await ask("I cant go that way..\n");
   }
 }
 
 async function deadEndRoom() {
-  userAnswer = await ask ("You now stand at the edge of a giant cliff. \n")
+  userAnswer = await ask("You now stand at the edge of a giant cliff. \n");
   while (userAnswer !== "s") {
-    userAnswer = await ask("I cant go that way..\n")
+    userAnswer = await ask("I cant go that way..\n");
   }
-  if (userAnswer === "s"){
-    puzzleRoom()
+  if (userAnswer === "s") {
+    puzzleRoom();
+    console.log(
+      "You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree."
+    );
   }
 }
 
 async function wellRoom() {
-  userAnswer = await ask ("You come to a grassy field, it is all but empty besides a well.\n")
-  if (userAnswer === "n"){
-    puzzleRoom()
+  userAnswer = await ask(
+    "You come to a grassy field, it is all but empty besides a well.\n"
+  );
+  if (userAnswer === "n") {
+    puzzleRoom();
+  } else if (userAnswer === "s") {
+    lockedRoom();
   }
-  else if (userAnswer === "s"){
-    lockedRoom()
+}
+
+async function lockedRoom() {
+  userAnswer = await ask(
+    'You come to a gate leading south, guarded by a troll. The troll exclaims "I will not let you through this gate, unless there is something in it for me!!". \n'
+  );
+  if (userAnswer === "n") {
+    wellRoom();
   }
-
 }
-
-async function lockedRoom(){
-userAnswer === await ask ('You come to a gate, guarded by a troll. The troll exclaims "I will not let you through this gate, unless there is something in it for me!!". \n')
-if (userAnswer === "n") {
-  wellRoom()
-}
-
-}
-
-/*let rooms = meadowRoom 
-
-let transitions = {
-  meadowRoom: ['lakeRoom', 'riverRoom'],
-  riverRoom:['meadowRoom'],
-  lakeRoom: ['meadowRoom', 'puzzleRoom'], 
-  puzzleRoom: ['lakeRoom', 'deadEnd', 'wellRoom'],
-  deadEnd: ['puzzleRoom'],
-  wellRoom: ['lockedRoom', 'puzzleRoom'],
-  lockedRoom: ['wellRoom']
-*/
