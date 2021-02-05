@@ -67,15 +67,14 @@ async function riverRoom() {
 lakeRoomInv = {stick:stick}
 async function lakeRoom() {
 	let userAnswer = await ask('_');
-	if (userAnswer === 'look around') {
+	if (userAnswer === 'look around' && Object.keys(lakeRoomInv).length !==0) {
 		let investigate = Object.keys(lakeRoomInv);
 		console.log(`You see a ${investigate}\n`);
-		if (Object.keys(lakeRoomInv) === []){
-			console.log("There's nothing here")
 			return lakeRoom()
-		} 
-		return lakeRoom();
-	}
+		} else if (Object.keys(lakeRoomInv).length === 0){
+			console.log("There's nothing here..")
+			return lakeRoom() }
+		
 	if (userAnswer === 'take' || userAnswer === 'add') {
 		let userAnswer = await ask('take what?\n_');
 		if (userAnswer === 'stick') {
@@ -97,7 +96,6 @@ async function lakeRoom() {
 		userAnswer === (await ask('I cant go that way..\n'));
 	}
 }
-
 async function puzzleRoom() {
   userAnswer = await ask(
     "You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree.\n"
@@ -146,14 +144,4 @@ async function lockedRoom() {
   }
 }
 
-/*let rooms = meadowRoom 
 
-let transitions = {
-  meadowRoom: ['lakeRoom', 'riverRoom'],
-  riverRoom:['meadowRoom'],
-  lakeRoom: ['meadowRoom', 'puzzleRoom'], 
-  puzzleRoom: ['lakeRoom', 'deadEnd', 'wellRoom'],
-  deadEnd: ['puzzleRoom'],
-  wellRoom: ['lockedRoom', 'puzzleRoom'],
-  lockedRoom: ['wellRoom']
-*/
