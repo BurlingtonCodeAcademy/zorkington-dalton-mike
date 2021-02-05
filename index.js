@@ -9,9 +9,7 @@ function ask(questionText) {
 
 start();
 
-
 let playerInventory = [];
-
 
 class Item {
 	constructor(item, description, collectable) {
@@ -20,16 +18,16 @@ class Item {
 		this.description = description;
 		this.collectable = collectable || false;
 	}
-    
-    take() {
-	if (this.collectable) {
-		playerInventory.push(this.item);
-		console.log(`You collected ${this.item}`);
-	} else {
-		console.log("you can't take that!");
-	    }
-    }
- }
+
+	take() {
+		if (this.collectable) {
+			playerInventory.push(this.item);
+			console.log(`You collected ${this.item}`);
+		} else {
+			console.log("you can't take that!");
+		}
+	}
+}
 
 let stick = new Item('stick', "Just a plain ol' stick nothing interesting", true);
 
@@ -46,6 +44,7 @@ async function meadowRoom() {
 		userAnswer = await ask('I cant go that way..\n');
 	}
 	if (userAnswer === 'n') {
+		console.log('You approach a lake');
 		lakeRoom();
 	} else if (userAnswer === 's') {
 		riverRoom();
@@ -63,27 +62,31 @@ async function riverRoom() {
 }
 
 async function lakeRoom() {
-	roomInv = [stick];
-	let userAnswer = await ask('You approach a lake\n_');
+	roomInv = { stick: stick };
+	let userAnswer = await ask('_');
 	if (userAnswer === 'look around') {
-		userAnswer = await ask('You see a stick\n');
-	  if (userAnswer === 'take' || userAnswer === 'add'){
-        stick.take() 
-      return lakeRoom()
-        }
-
-
-    }else if (userAnswer === 'drink') {
+		let investigate = Object.keys(roomInv);
+		console.log(`You see a ${investigate}\n`);
+		return lakeRoom();
+	}
+	if (userAnswer === 'take' || userAnswer === 'add') {
+		let userAnswer = await ask('take what?\n_');
+		if (userAnswer === 'stick') {
+			stick.take();
+			return lakeRoom();
+		}
+	} else if (userAnswer === 'drink') {
 		console.log('The water is tainted and made you ill. You died, loser!');
 		process.exit();
-	}else if (userAnswer === 'i'){
-        await ask(playerInventory)
-    }
+	} else if (userAnswer === 'i') {
+		console.log(playerInventory);
+		lakeRoom();
+	}
 }
 
 async function puzzleRoom() {
 	userAnswer = await ask(
-		'You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree.\n'
+		'You come to a forrest. It is shady, but something seems to be (shimering behind a nearby tree.\n'
 	);
 	if (userAnswer === 'examine') {
 		console.log('It appears to be a bucket, must go to a well.');
