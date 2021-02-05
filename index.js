@@ -14,7 +14,6 @@ start();
 
 let playerInventory = [];
 
-
 class Item {
   constructor(item, description, collectable) {
     // may need to include an action or description
@@ -32,6 +31,11 @@ class Item {
     }
   }
 
+  drop(){
+	  if (this.collectable) {
+		  
+	  }
+  }
 }
 
 let stick = new Item(
@@ -73,15 +77,19 @@ async function meadowRoom() {
 	return meadowRoom()
 }
 }
+
 riverRoomInv = {}
 async function riverRoom() {
   userAnswer = await ask("_");
-  while (userAnswer !== "n") {
-    userAnswer = await ask("I cant go that way..");
+  if (userAnswer === "s"|| userAnswer === 'e'|| userAnswer === 'w' ) {
+    console.log("I cant go that way..");
+	riverRoom()
   }
-  if (userAnswer === "n") {
-	  console.log("Y are in a meadow with some wild flowers")
+  else if (userAnswer === "n") {
     meadowRoom();
+  }else {
+	  console.log("I am unsure of what you mean")
+	  return riverRoom()
   }
 }
 
@@ -113,9 +121,10 @@ async function lakeRoom() {
 		puzzleRoom();
 	} else if (userAnswer === 's') {
 		meadowRoom();
-	} else {
-		userAnswer === (await ask('I cant go that way..\n'));
-	}
+	} else if (userAnswer === 'n'|| userAnswer === 'e'){ 
+		console.log ('I cant go that way..\n');
+		return lakeRoom()
+	}else console.log("I'm unsure of what you mean...")
 }
 
 async function puzzleRoom() {
