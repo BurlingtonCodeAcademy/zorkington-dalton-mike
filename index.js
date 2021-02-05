@@ -55,7 +55,7 @@ async function start() {
 
 meadowRoomInv = {}
 async function meadowRoom() {
-  let userAnswer = await ask("_")
+  let userAnswer = await ask("A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n_")
   while (userAnswer === 'w' || userAnswer === "e") {
     console.log("I cant go that way..");
 	return meadowRoom()
@@ -63,10 +63,14 @@ async function meadowRoom() {
     console.log("You approach a lake");
     lakeRoom();
   } else if (userAnswer === "s") {
-	console.log( "There seems to be a massive river, obstructing all movement except to the north")
+	console.log( "You come upon a massive river, obstructing all movement except to the north")
     riverRoom();
   } else if (userAnswer === 'look around'){
-  console.log("There seems to be a massive river, obstructing all movement except to the north")
+  console.log("The meadow is empty aside for some wildflowers")
+  return meadowRoom()
+} else {
+	console.log('I am unsure what you mean...')
+	return meadowRoom()
 }
 }
 riverRoomInv = {}
@@ -76,7 +80,7 @@ async function riverRoom() {
     userAnswer = await ask("I cant go that way..");
   }
   if (userAnswer === "n") {
-	  console.log("A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south")
+	  console.log("Y are in a meadow with some wild flowers")
     meadowRoom();
   }
 }
