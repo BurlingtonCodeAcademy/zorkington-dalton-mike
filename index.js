@@ -100,7 +100,8 @@ async function lakeRoom() {
 		let investigate = Object.keys(lakeRoomInv);
 		console.log(`You see a ${investigate}\n`);
 			return lakeRoom()
-		} else if (Object.keys(lakeRoomInv).length === 0){
+		} else if (Object.keys(lakeRoomInv).length === 0 && userAnswer === 'look around')
+		{
 			console.log("There's nothing here..")
 			return lakeRoom() }
 		
@@ -118,6 +119,7 @@ async function lakeRoom() {
 		console.log(playerInventory);
 		return lakeRoom()
 	} else if (userAnswer === 'w') {
+		console.log("You entered the puzzle room")
 		puzzleRoom();
 	} else if (userAnswer === 's') {
 		meadowRoom();
@@ -125,7 +127,9 @@ async function lakeRoom() {
 		console.log ('I cant go that way..\n');
 		return lakeRoom()
 	}else console.log("I'm unsure of what you mean...")
+		return lakeRoom()
 }
+
 
 async function puzzleRoom() {
   let puzzleRoomInv = { bucket: bucket };
