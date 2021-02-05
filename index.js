@@ -1,10 +1,13 @@
-const readline = require('readline');
-const readlineInterface = readline.createInterface(process.stdin, process.stdout);
+const readline = require("readline");
+const readlineInterface = readline.createInterface(
+  process.stdin,
+  process.stdout
+);
 
 function ask(questionText) {
-	return new Promise((resolve, reject) => {
-		readlineInterface.question(questionText, resolve);
-	});
+  return new Promise((resolve, reject) => {
+    readlineInterface.question(questionText, resolve);
+  });
 }
 
 start();
@@ -29,11 +32,17 @@ class Item {
 	}
 }
 
-let stick = new Item('stick', "Just a plain ol' stick nothing interesting", true);
+let stick = new Item(
+  "stick",
+  "Just a plain ol' stick nothing interesting",
+  true
+);
 
 async function start() {
-	console.log(`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.`);
-	meadowRoom();
+  console.log(
+    `You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.`
+  );
+  meadowRoom();
 }
 async function meadowRoom() {
 	let roomInv = [];
@@ -52,13 +61,15 @@ async function meadowRoom() {
 }
 
 async function riverRoom() {
-	let roomInv = [];
-	userAnswer = await ask('There seems to be a massive river, obstructing all movement except to the north \n');
-	if (userAnswer !== 'n') {
-		userAnswer = await ask('I cant go that way..\n');
-	} else if (userAnswer === 'n') {
-		meadowRoom();
-	}
+  let roomInv = [];
+  userAnswer = await ask(
+    "There seems to be a massive river, obstructing all movement except to the north \n"
+  );
+  while (userAnswer !== "n") {
+    userAnswer = await ask("I cant go that way..\n");
+  } if (userAnswer === "n") {
+    meadowRoom();
+  }
 }
 
 async function lakeRoom() {
@@ -81,7 +92,15 @@ async function lakeRoom() {
 	} else if (userAnswer === 'i') {
 		console.log(playerInventory);
 		lakeRoom();
-	}
+	}else if (userAnswer === "w"){
+		puzzleRoom();
+	  }
+	  else if (userAnswer === "s"){
+		meadowRoom()
+	  }
+	  else {
+		userAnswer === await ask ("I cant go that way..\n")
+	  }
 }
 
 async function puzzleRoom() {
@@ -93,6 +112,9 @@ async function puzzleRoom() {
 	} else if (userAnswer === 's') {
 	}
 }
+
+
+
 /*let rooms = meadowRoom 
 
 let transitions = {
