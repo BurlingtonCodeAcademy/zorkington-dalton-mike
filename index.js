@@ -178,6 +178,7 @@ async function deadEndRoom() {
   userAnswer = await ask("_");
   if ( userAnswer === "look around") {
     console.log(`You see a ${Object.keys(deadEndRoomInv)}`);
+    return deadEndRoom();
   }
   if (userAnswer === "take" || userAnswer === "add") {
     let userAnswer = await ask("take what?\n_");
