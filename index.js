@@ -1,10 +1,13 @@
-const readline = require('readline');
-const readlineInterface = readline.createInterface(process.stdin, process.stdout);
+const readline = require("readline");
+const readlineInterface = readline.createInterface(
+  process.stdin,
+  process.stdout
+);
 
 function ask(questionText) {
-	return new Promise((resolve, reject) => {
-		readlineInterface.question(questionText, resolve);
-	});
+  return new Promise((resolve, reject) => {
+    readlineInterface.question(questionText, resolve);
+  });
 }
 
 start();
@@ -12,124 +15,139 @@ start();
 let playerInventory = [];
 
 class Item {
-	constructor(item, description, collectable) {
-		// may need to include an action or description
-		this.item = item;
-		this.description = description;
-		this.collectable = collectable || false;
-	}
+  constructor(item, description, collectable) {
+    // may need to include an action or description
+    this.item = item;
+    this.description = description;
+    this.collectable = collectable || false;
+  }
 
-	take() {
-		if (this.collectable) {
-			playerInventory.push(this.item);
-			console.log(`You collected ${this.item}`);
-		} else {
-			console.log("you can't take that!");
-		}
-	}
+  take() {
+    if (this.collectable) {
+      playerInventory.push(this.item);
+      console.log(`You collected ${this.item}`);
+    } else {
+      console.log("you can't take that!");
+    }
+  }
 }
 
-let stick = new Item('stick', "Just a plain ol' stick nothing interesting", true);
+let stick = new Item(
+  "stick",
+  "Just a plain ol' stick nothing interesting",
+  true
+);
 
-let bucket = new Item('bucket', 'Could be used to get water from a well', true);
+let bucket = new Item("bucket", "Could be used to get water from a well", true);
 
-let rock = new Item('rock', 'this rock is too heavy to lift', false);
+let rock = new Item("rock", "this rock is too heavy to lift", false);
 
-let goldCoin = new Item('gold coin', 'could be used to pay someone off', true);
+let goldCoin = new Item("gold coin", "could be used to pay someone off", true);
 
 async function start() {
-	console.log(`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.`);
-	meadowRoom();
+  console.log(
+    `You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north`
+  );
+  meadowRoom();
 }
 
 meadowRoomInv = {};
 async function meadowRoom() {
-	let userAnswer = await ask(
-		'A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n_'
-	);
-	while (userAnswer === 'w' || userAnswer === 'e') {
-		console.log('I cant go that way..');
-		return meadowRoom();
-	}
-	if (userAnswer === 'n') {
-		console.log('You approach a lake');
-		lakeRoom();
-	} else if (userAnswer === 's') {
-		console.log('You come upon a massive river, obstructing all movement except to the north');
-		riverRoom();
-	} else if (userAnswer === 'look around') {
-		console.log('The meadow is empty aside for some wildflowers');
-		return meadowRoom();
-	} else {
-		console.log('I am unsure what you mean...');
-		return meadowRoom();
-	}
+  let userAnswer = await ask(
+    "A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n_"
+  );
+  while (userAnswer === "w" || userAnswer === "e") {
+    console.log("I cant go that way..");
+    return meadowRoom();
+  }
+  if (userAnswer === "n") {
+    console.log("You approach a lake");
+    lakeRoom();
+  } else if (userAnswer === "s") {
+    console.log(
+      "You come upon a massive river, obstructing all movement except to the north"
+    );
+    riverRoom();
+  } else if (userAnswer === "look around") {
+    console.log("You are in a meadow, which is empty aside for some wildflowers");
+    return meadowRoom();
+  } else {
+    console.log("I am unsure what you mean...");
+    return meadowRoom();
+  }
 }
 
 riverRoomInv = {};
 async function riverRoom() {
-	userAnswer = await ask('_');
-	if (userAnswer === 's' || userAnswer === 'e' || userAnswer === 'w') {
-		console.log('I cant go that way..');
-		riverRoom();
-	} else if (userAnswer === 'n') {
-		meadowRoom();
-	} else if (userAnswer === 'look around') {
-		console.log('There is massive river, obstructing all movement except to the north');
-		return riverRoom();
-	} else {
-		console.log('I am unsure of what you mean');
-		return riverRoom();
-	}
+  userAnswer = await ask("_");
+  if (userAnswer === "s" || userAnswer === "e" || userAnswer === "w") {
+    console.log("I cant go that way..");
+    riverRoom();
+  } else if (userAnswer === "n") {
+    meadowRoom();
+  } else if (userAnswer === "look around") {
+    console.log(
+      "There is massive river, obstructing all movement except to the north"
+    );
+    return riverRoom();
+  } else {
+    console.log("I am unsure of what you mean");
+    return riverRoom();
+  }
 }
 
 lakeRoomInv = { stick: stick };
 async function lakeRoom() {
-	roomInv = lakeRoomInv;
-	let userAnswer = await ask('_');
-	if (userAnswer === 'look around' && Object.keys(lakeRoomInv).length !== 0) {
-		let investigate = Object.keys(lakeRoomInv);
-		console.log('You are in a clearing with a small lake\n');
-		console.log(`You see a ${investigate}\n`);
-		return lakeRoom();
-	} else if (Object.keys(lakeRoomInv).length === 0 && userAnswer === 'look around') {
-		console.log('You are in a clearing with a small lake\n');
-		console.log("There's nothing here..");
-		return lakeRoom();
-	}
+  roomInv = lakeRoomInv;
+  let userAnswer = await ask("_");
+  if (userAnswer === "look around" && Object.keys(lakeRoomInv).length !== 0) {
+    let investigate = Object.keys(lakeRoomInv);
+    console.log("You are in a clearing with a small lake\n");
+    console.log(`You see a ${investigate}\n`);
+    return lakeRoom();
+  } else if (
+    Object.keys(lakeRoomInv).length === 0 &&
+    userAnswer === "look around"
+  ) {
+    console.log("You are in a clearing with a small lake\n");
+    console.log("There's nothing here..");
+    return lakeRoom();
+  }
 
-	if (userAnswer === 'take' || userAnswer === 'add') {
-		let userAnswer = await ask('take what?\n_');
-		if (userAnswer === 'stick') {
-			stick.take();
-			delete lakeRoomInv.stick;
-			return lakeRoom();
-		}
-	} else if (userAnswer === 'drink') {
-		console.log('The water is tainted and made you ill. You died, loser!');
-		process.exit();
-	} else if (userAnswer === 'i') {
-		console.log(playerInventory);
-		return lakeRoom();
-	} else if (userAnswer === 'w') {
-		console.log('You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree.');
-		puzzleRoom();
-	} else if (userAnswer === 's') {
-		meadowRoom();
-	} else if (userAnswer === 'drop') {
-		let userAnswer = await ask('drop what?');
-		if (playerInventory.includes(userAnswer)) {
-			playerInventory.splice(playerInventory.indexOf(userAnswer));
-			lakeRoomInv[userAnswer] = userAnswer
-			console.log(playerInventory);
-		} else {
-      console.log("I can't...")
-		}
-	} else if (userAnswer === 'n' || userAnswer === 'e') {
-		console.log('I cant go that way..\n');
-		return lakeRoom();
-	} else console.log("I'm unsure of what you mean...");
-	return lakeRoom();
+  if (userAnswer === "take" || userAnswer === "add") {
+    let userAnswer = await ask("take what?\n_");
+    if (userAnswer === "stick") {
+      stick.take();
+      delete lakeRoomInv.stick;
+      return lakeRoom();
+    }
+  } else if (userAnswer === "drink") {
+    console.log("The water is tainted and made you ill. You died, loser!");
+    process.exit();
+  } else if (userAnswer === "i") {
+    console.log(playerInventory);
+    return lakeRoom();
+  } else if (userAnswer === "w") {
+    console.log(
+      "You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree."
+    );
+    puzzleRoom();
+  } else if (userAnswer === "s") {
+    meadowRoom();
+  } else if (userAnswer === "drop") {
+    let userAnswer = await ask("drop what?");
+    if (playerInventory.includes(userAnswer)) {
+      playerInventory.splice(playerInventory.indexOf(userAnswer));
+      lakeRoomInv[userAnswer] = userAnswer;
+      console.log(playerInventory);
+    } else {
+      console.log("I can't...");
+    }
+  } else if (userAnswer === "n" || userAnswer === "e") {
+    console.log("I cant go that way..\n");
+    return lakeRoom();
+  } else console.log("I'm unsure of what you mean...");
+  return lakeRoom();
 }
 
 let puzzleRoomInv = { bucket: bucket };
@@ -137,13 +155,15 @@ async function puzzleRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "look around" && Object.keys(puzzleRoomInv).length !== 0) {
     let investigate = Object.keys(puzzleRoomInv);
-    console.log(`You see a ${investigate} must go to a well`); // this procces is a little wanking need to add some catch alls
+    console.log("You are in a forrest.")
+    console.log(`You see a ${investigate} must go to a well`); // this procces is a little wonkee need to add some catch alls
     return puzzleRoom();
   } else if (
     Object.keys(puzzleRoomInv).length === 0 &&
     userAnswer === "look around"
   ) {
     //this seems to catch most but not all braeking bugs
+    console.log("You are in a forrest.")
     console.log("There's nothing here..");
     return puzzleRoom();
   }
@@ -175,6 +195,7 @@ deadEndRoomInv = { rock: rock };
 async function deadEndRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "look around") {
+    console.log("You are standing at the edge of a cliff.")
     console.log(`You see a ${Object.keys(deadEndRoomInv)}`);
     return deadEndRoom();
   }
@@ -200,6 +221,7 @@ wellRoomInv = { goldCoin: goldCoin };
 async function wellRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "look around" && Object.keys(wellRoomInv).length !== 0) {
+    console.log("You are in a field with a well.")
     console.log(
       "The well appears to have something shiny at the bottom, but it is missing it's bucket."
     );
@@ -217,7 +239,7 @@ async function wellRoom() {
     Object.keys(wellRoomInv).length === 0 &&
     userAnswer === "look around"
   ) {
-    console.log("There's nothing here but an empty well.");
+    console.log("There's nothing in this field but an empty well.");
     return wellRoom();
   } else if (userAnswer === "n") {
     puzzleRoom();
@@ -265,12 +287,21 @@ async function lockedRoom() {
   } else if (userAnswer === "s" && Object.keys(lockedRoomInv).length === 0) {
     console.log("The troll will not let you through the gate.");
     return lockedRoom();
-  } else if (userAnswer === "e" || userAnswer === "w")
+  } else if (
+    Object.keys(lockedRoomInv).length === 0 &&
+    userAnswer === "look around"
+  ) {
+    console.log("There is a gate but it is gaurded by a troll");
+    return lockedRoom();
+  } else if (lockedRoomInv.includes("gold coin") && userAnswer === 'look around') {
+		console.log("The troll will allow you to pass through the gate and carry onward south.");
+		return lockedRoom();}
+  else if (userAnswer === "e" || userAnswer === "w")
     console.log("I can't go that way...");
   else console.log("I don't know what you mean...");
   return lockedRoom();
 }
-
+finalRoomInv = []
 async function finalRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "n") {
@@ -284,6 +315,10 @@ async function finalRoom() {
   } else if (userAnswer === "e" || userAnswer === "w") {
     console.log("I can't go that way...");
     return finalRoom();
-  } else console.log("I'm not sure what you mean...");
+  } else if (userAnswer === "look around") {
+    console.log("You are in a cave. There is a portal to the south, which appears to lead home, but not much else.")
+    return finalRoom()
+  } 
+  else console.log("I'm not sure what you mean...");
   return finalRoom();
 }
