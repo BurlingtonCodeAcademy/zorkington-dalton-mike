@@ -171,11 +171,12 @@ async function puzzleRoom() {
     lakeRoom();
     console.log("You approach a lake.");
   } else if (userAnswer === "w") {
-    userAnswer = await ask("I cant go that way..\n");
+    console.log("I cant go that way..");
+    return puzzleRoom
   } else console.log("I'm unsure of what you mean...");
   return puzzleRoom();
 }
-let deadEndRoomInv = { rock: rock };
+deadEndRoomInv = { rock: rock };
 async function deadEndRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "look around") {
@@ -191,16 +192,16 @@ async function deadEndRoom() {
   } else if (userAnswer === "n" || userAnswer === "e" || userAnswer === "w") {
     userAnswer = await ask("There is nothing that way but certain death...\n");
   } else if (userAnswer === "s") {
-    puzzleRoom();
     console.log(
       "You come to a forrest. It is shady, but something seems to be shimering behind a nearby tree."
     );
+    puzzleRoom();
   } else {
     console.log("I don't know what you mean..."); //else catch all keeps on getting trigged after look around
     return deadEndRoom();
   }
 }
-let wellRoomInv = { goldCoin: goldCoin };
+wellRoomInv = { goldCoin: goldCoin };
 async function wellRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "look around" && Object.keys(wellRoomInv).length !== 0) {
@@ -216,7 +217,6 @@ async function wellRoom() {
   ) {
     goldCoin.take();
     delete wellRoomInv.goldCoin;
-    console.log(playerInventory)
     return wellRoom();
   } else if (
     Object.keys(wellRoomInv).length === 0 &&
@@ -227,7 +227,9 @@ async function wellRoom() {
   } else if (userAnswer === "n") {
     puzzleRoom();
   } else if (userAnswer === "s") {
-    console.log('You come to a gate leading south, guarded by a troll. The troll exclaims "I will not let you through this gate, unless there is something in it for me!!"')
+    console.log(
+      'You come to a gate leading south, guarded by a troll. The troll exclaims "I will not let you through this gate, unless there is something in it for me!!"'
+    );
     lockedRoom();
   } else if (userAnswer === "e" || userAnswer === "w") {
     console.log("I can't go that.\n");
@@ -237,14 +239,18 @@ async function wellRoom() {
 lockedRoomInv = [];
 async function lockedRoom() {
   userAnswer = await ask("_");
-  if (userAnswer === "n") {
+  if (userAnswer === "s" && lockedRoomInv.includes(goldCoin)) {
+    // this is not working
+    console.log("Congrulations you made it through the gate. You win!!!!");
+    process.exit();
+  } else if (userAnswer === "n") {
     console.log(
-      "You come to a grassy field, it is all but empty besides a well.\n"
+      "You come to a grassy field, it is all but empty besides a well."
     );
     wellRoom();
   } else if (
     userAnswer === "give gold coin" &&
-    playerInventory.includes('gold coin')
+    playerInventory.includes("gold coin")
   ) {
     console.log(
       "You paid the troll toll, he will now let you pass through the gate!!!"
@@ -252,16 +258,15 @@ async function lockedRoom() {
     lockedRoomInv.push(goldCoin);
     delete playerInventory.goldCoin;
     return lockedRoom();
-  } else if (userAnswer === "s" && lockedRoomInv.includes('gold coin')) {
-    console.log("Congrulations you made it through the gate. You win!!!!");
-    process.exit();
-  }
-    else if (userAnswer === "s" && Object.keys(lockedRoomInv).length === 0){
-      console.log("The troll will not let you through the gate");
-      return lockedRoom();
-    }
-    else if (userAnswer === "e" || userAnswer === "w")
-    console.log("I can't go that way...")
-    else console.log("I don't know what you mean...")
+  } else if (userAnswer === "give stick" && playerInventory.includes("stick") || userAnswer === "give bucket" && playerInventory.includes("bucket")){
+    console.log("The troll only accepts gold!!!")
+    return lockedRoom()
+  } 
+  else if (userAnswer === "s" && Object.keys(lockedRoomInv).length === 0) {
+    console.log("The troll will not let you through the gate.");
     return lockedRoom();
+  } else if (userAnswer === "e" || userAnswer === "w")
+    console.log("I can't go that way...");
+  else console.log("I don't know what you mean...");
+  return lockedRoom();
 }
