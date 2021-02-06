@@ -172,7 +172,7 @@ async function puzzleRoom() {
     console.log("You approach a lake.");
   } else if (userAnswer === "w") {
     console.log("I cant go that way..");
-    return puzzleRoom
+    return puzzleRoom;
   } else console.log("I'm unsure of what you mean...");
   return puzzleRoom();
 }
@@ -241,8 +241,10 @@ async function lockedRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "s" && lockedRoomInv.includes(goldCoin)) {
     // this is not working
-    console.log("Congrulations you made it through the gate. You win!!!!");
-    process.exit();
+    console.log(
+      "You now enter a cave with a portal to the south, the protal leads back to your computer and desk"
+    );
+    finalRoom();
   } else if (userAnswer === "n") {
     console.log(
       "You come to a grassy field, it is all but empty besides a well."
@@ -258,15 +260,34 @@ async function lockedRoom() {
     lockedRoomInv.push(goldCoin);
     delete playerInventory.goldCoin;
     return lockedRoom();
-  } else if (userAnswer === "give stick" && playerInventory.includes("stick") || userAnswer === "give bucket" && playerInventory.includes("bucket")){
-    console.log("The troll only accepts gold!!!")
-    return lockedRoom()
-  } 
-  else if (userAnswer === "s" && Object.keys(lockedRoomInv).length === 0) {
+  } else if (
+    (userAnswer === "give stick" && playerInventory.includes("stick")) ||
+    (userAnswer === "give bucket" && playerInventory.includes("bucket"))
+  ) {
+    console.log("The troll only accepts gold!!!");
+    return lockedRoom();
+  } else if (userAnswer === "s" && Object.keys(lockedRoomInv).length === 0) {
     console.log("The troll will not let you through the gate.");
     return lockedRoom();
   } else if (userAnswer === "e" || userAnswer === "w")
     console.log("I can't go that way...");
   else console.log("I don't know what you mean...");
   return lockedRoom();
+}
+
+async function finalRoom() {
+  userAnswer = await ask("_");
+  if (userAnswer === "n") {
+    console.log("You are back in the room with the troll.");
+    return lockedRoom();
+  } else if (userAnswer === "s") {
+    console.log(
+      "The protal has taken you back to your desk. Congrulations you made it through the game. You win!!!!"
+    );
+    process.exit();
+  } else if (userAnswer === "e" || userAnswer === "w") {
+    console.log("I can't go that way...");
+    return finalRoom();
+  } else console.log("I'm not sure what you mean...");
+  return finalRoom();
 }
