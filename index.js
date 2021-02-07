@@ -12,7 +12,8 @@ start();
 let playerInventory = [];
 
 //assigning variables as undefined in order to make global functions out of the scope of the room's
-roomInv = undefined;
+
+roomInv = []
 collectedItem = undefined;
 userAnswer = undefined;
 droppableItems = undefined;
@@ -42,7 +43,7 @@ let drop = function () {
 };
 
 //--------Global look around function to be called on in any room --------//
-let lookAround = function (userAnswer) {
+let lookAround = function () {
 	if (roomInv.length !== 0) {
 		console.log(roomDescription);
 		console.log(`You see a ${collectedItem.item}`);
@@ -52,9 +53,10 @@ let lookAround = function (userAnswer) {
 	}
 };
 
+//-------global check inventory function that will take the items in the player inventory array and display there item name.
 let checkInventory = function () {
 	if (playerInventory.length > 0) {
-		console.log(droppableItems.item);
+		console.log(droppableItems.item + ": " +droppableItems.description)
 	} else if (playerInventory.length <= 0) {
 		console.log('Empty');
 	}
@@ -63,6 +65,8 @@ let checkInventory = function () {
 //-----making a list of room descriptions to call on inside global look around functions
 roomDescription = undefined;
 let lakeRoomDescription = 'You are in a clearing with a small lake\n';
+let riverRoomDescription = 'There is massive river, obstructing all movement except to the north\n'
+let meadowRoomDescription = "A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n"
 
 class Item {
 	constructor(item, description, collectable) {
@@ -84,45 +88,84 @@ async function start() {
 	console.log(
 		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north`
 	);
-	meadowRoom();
+
+	meadowRoom()
 }
 
-meadowRoomInv = {};
+
+meadowRoomInv = []
 async function meadowRoom() {
-	let userAnswer = await ask(
-		'A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n_'
-	);
-	while (userAnswer === 'w' || userAnswer === 'e') {
+  let userAnswer = await ask('_');
+  roomInv = meadowRoomInv;
+	roomDescription = meadowRoomDescription;
+
+	for (let items of roomInv) {
+		collectedItem = items;
+	}
+
+	for (let items of playerInventory) {
+		droppableItems = items;
+	}
+
+	
+	if (userAnswer === 'w' || userAnswer === 'e') {
 		console.log('I cant go that way..');
 		return meadowRoom();
 	}
-	if (userAnswer === 'n') {
-		console.log('You approach a lake');
+	else if (userAnswer === 'n') {
+		console.log('You approach a clearing with a small lake');
 		lakeRoom();
 	} else if (userAnswer === 's') {
 		console.log('You come upon a massive river, obstructing all movement except to the north');
 		riverRoom();
 	} else if (userAnswer === 'look around') {
-		console.log('You are in a meadow, which is empty aside for some wildflowers');
+		lookAround()
 		return meadowRoom();
-	} else {
+	} else if(userAnswer === 'take'){
+    take()
+    return meadowRoom()
+  } else if (userAnswer === 'drop') {
+    drop()
+    return meadowRoom()
+  }else if (userAnswer === 'i'){
+    checkInventory()
+    return meadowRoom()
+  } else {
 		console.log('I am unsure what you mean...');
 		return meadowRoom();
 	}
 }
 
-riverRoomInv = {};
+riverRoomInv = [];
 async function riverRoom() {
+  roomInv = riverRoomInv;
+	roomDescription = riverRoomDescription;
+
+	for (let items of roomInv) {
+		collectedItem = items;
+	}
+
+	for (let items of playerInventory) {
+		droppableItems = items;
+	}
 	userAnswer = await ask('_');
 	if (userAnswer === 's' || userAnswer === 'e' || userAnswer === 'w') {
 		console.log('I cant go that way..');
 		riverRoom();
 	} else if (userAnswer === 'n') {
+    console.log(' you enter the meadow you woke up in...' + meadowRoomDescription)
 		meadowRoom();
 	} else if (userAnswer === 'look around') {
-		console.log('There is massive river, obstructing all movement except to the north');
+		lookAround()
 		return riverRoom();
-	} else {
+	} else if(userAnswer === 'take') {
+    take();
+    return riverRoom()
+  }else if (userAnswer === 'i'){
+    checkInventory()
+  }else if(userAnswer === 'drop'){
+    drop()
+  }else {
 		console.log('I am unsure of what you mean');
 		return riverRoom();
 	}
@@ -155,6 +198,7 @@ async function lakeRoom() {
 		console.log('You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree.');
 		puzzleRoom();
 	} else if (userAnswer === 's') {
+    console.log('You are back in the meadow you woke up in')
 		meadowRoom();
 	} else if (userAnswer === 'n' || userAnswer === 'e') {
 		console.log('I cant go that way..\n');
@@ -209,6 +253,7 @@ async function puzzleRoom() {
 	} else console.log("I'm unsure of what you mean...");
 	return puzzleRoom();
 }
+
 deadEndRoomInv = { rock: rock };
 async function deadEndRoom() {
 	userAnswer = await ask('_');
@@ -233,6 +278,7 @@ async function deadEndRoom() {
 		return deadEndRoom();
 	}
 }
+
 wellRoomInv = { goldCoin: goldCoin };
 async function wellRoom() {
 	userAnswer = await ask('_');
@@ -295,6 +341,7 @@ async function lockedRoom() {
 	else console.log("I don't know what you mean...");
 	return lockedRoom();
 }
+
 finalRoomInv = [];
 async function finalRoom() {
 	userAnswer = await ask('_');
