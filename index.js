@@ -375,7 +375,7 @@ async function wellRoom() {
 	if (userAnswer === 'use bucket' && playerInventory.includes(bucket)) {
 		console.log('You attach the bucket to the well and send it down');
 		userAnswer = await ask('You see a gold coin!\n_');
-		if (acceptableSouthCommands.includes(userAnswer)) {
+		if (acceptableTakeCommands.includes(userAnswer)) {
 			userAnswer = await ask('take what?\n_');
 			take(userAnswer);
 			return wellRoom();
@@ -433,7 +433,7 @@ async function lockedRoom() {
 	for (let items of playerInventory) {
 		droppableItems = items;
 	}
-	w;
+
 
 	if (userAnswer === 'look around') {
 		lookAround();
@@ -442,7 +442,7 @@ async function lockedRoom() {
 
 	if (acceptableSouthCommands.includes(userAnswer) && trollInv.includes(goldCoin)) {
 		// this is not working
-		console.log('You now enter a cave with a portal to the south, the protal leads back to your computer and desk');
+		console.log('You now enter a cave with a portal to the south, the portal sucks you through a vortex that you feel pulling at your very DNA and in a sudden snap you awaken back at your computer and desk..... was it a dream?');
 		finalRoom();
 	} else if (acceptableNorthCommands.includes(userAnswer)) {
 		console.log('You come to a grassy field, it is all but empty besides a well.');
@@ -453,10 +453,9 @@ async function lockedRoom() {
 		trollInv.push(goldCoin);
 		delete playerInventory.goldCoin;
 		return lockedRoom();
-	} else if (
-		(userAnswer === 'use stick' && playerInventory.includes('stick')) ||
-		(userAnswer === 'use bucket' && playerInventory.includes('bucket'))
-	) {
+	} else if 
+		(userAnswer === 'use stick' && playerInventory.includes(stick) ||
+		userAnswer === 'use bucket' && playerInventory.includes(bucket)) {
 		console.log('The troll only accepts gold!!!');
 		return lockedRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer) && !trollInv.includes(goldCoin)) {
@@ -473,9 +472,6 @@ async function lockedRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return lockedRoom();
-	} else if (userAnswer === "use stick" || userAnswer === "use bucket") {
-		console.log("That item is of no use in this area")
-		return lockedRoom()
 	} else {
 		console.log("I don't know what you mean...");
 		return lockedRoom();
@@ -506,7 +502,7 @@ async function finalRoom() {
 		return lockedRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
 		console.log(
-			'The protal has taken you back to your desk. Congrulations you made it through the game. You win!!!!'
+			'The protal has taken you back to your desk. Congratulations you made it through the game. You win!!!!'
 		);
 		process.exit();
 	} else if (acceptableEastCommands.includes(userAnswer) || acceptableWestCommands.includes(userAnswer)) {
