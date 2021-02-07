@@ -113,7 +113,7 @@ let acceptableLookCommands = ['scan', 'look around', 'LOOK', 'LOOK AROUND', 'loo
 
 async function start() {
 	console.log(
-		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick".`
+		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick". To drop an item enter "drop" and then item name.`
 	);
 	meadowRoom();
 }
@@ -121,7 +121,8 @@ async function start() {
 meadowRoomInv = [rock, stick]; //keeping the array outside the function allows it to stay persistent throughout room travel
 async function meadowRoom() {
 	let userAnswer = await ask('_');
-	roomInv = meadowRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = meadowRoomInv;
 	roomDescription = meadowRoomDescription;
 
 	for (let roomItems of roomInv) {
@@ -176,6 +177,7 @@ async function riverRoom() {
 		droppableItems = items;
 	}
 	userAnswer = await ask('_');
+  userAnswer = userAnswer.trim(" ")
 	if (
 		acceptableSouthCommands.includes(userAnswer) ||
 		acceptableEastCommands.includes(userAnswer) ||
@@ -207,7 +209,9 @@ async function riverRoom() {
 
 lakeRoomInv = [stick];
 async function lakeRoom() {
-	roomInv = lakeRoomInv;
+	let userAnswer = await ask('_');
+	userAnswer = userAnswer.trim(" ")
+  roomInv = lakeRoomInv;
 	roomDescription = lakeRoomDescription;
 
 	for (let items of roomInv) {
@@ -218,8 +222,7 @@ async function lakeRoom() {
 		droppableItems = items;
 	}
 
-	let userAnswer = await ask('_');
-	if (acceptableLookCommands.includes(userAnswer)) {
+  if (acceptableLookCommands.includes(userAnswer)) {
 		lookAround();
 		return lakeRoom();
 	} else if (userAnswer === 'drink') {
@@ -262,7 +265,8 @@ async function lakeRoom() {
 puzzleRoomInv = [bucket];
 async function puzzleRoom() {
 	userAnswer = await ask('_');
-	roomInv = puzzleRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = puzzleRoomInv;
 	roomDescription = puzzleRoomDescription;
 
 	for (let items of roomInv) {
@@ -311,7 +315,8 @@ async function puzzleRoom() {
 deadEndRoomInv = [rock];
 async function deadEndRoom() {
 	userAnswer = await ask('_');
-	roomInv = deadEndRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = deadEndRoomInv;
 	roomDescription = deadEndRoomDescription;
 
 	for (let items of roomInv) {
@@ -358,7 +363,8 @@ async function deadEndRoom() {
 wellRoomInv = [goldCoin];
 async function wellRoom() {
 	userAnswer = await ask('_');
-	roomInv = wellRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = wellRoomInv;
 	roomDescription = wellRoomDescription;
 
 	for (let items of roomInv) {
@@ -423,7 +429,8 @@ lockedRoomInv = [];
 trollInv = [];
 async function lockedRoom() {
 	userAnswer = await ask('_');
-	roomInv = lockedRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = lockedRoomInv;
 	roomDescription = lockedRoomDescription;
 
 	for (let items of roomInv) {
@@ -472,9 +479,6 @@ async function lockedRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return lockedRoom();
-	} else if (userAnswer === "use stick" || userAnswer === "use bucket") {
-		console.log("That item is of no use in this area")
-		return lockedRoom()
 	} else {
 		console.log("I don't know what you mean...");
 		return lockedRoom();
@@ -484,7 +488,8 @@ async function lockedRoom() {
 finalRoomInv = [];
 async function finalRoom() {
 	userAnswer = await ask('_');
-	roomInv = finalRoomInv;
+	userAnswer = userAnswer.trim(" ")
+  roomInv = finalRoomInv;
 	roomDescription = finalRoomDescription;
 
 	for (let items of roomInv) {
