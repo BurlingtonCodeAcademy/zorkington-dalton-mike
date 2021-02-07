@@ -113,7 +113,8 @@ let acceptableLookCommands = ['scan', 'look around', 'LOOK', 'LOOK AROUND', 'loo
 
 async function start() {
 	console.log(
-		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick". To drop an item enter "drop" and then item name.`
+		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.... 
+    \nnext to you is a sign that reads: To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick". To drop an item enter "drop" and then item name when prompted.`
 	);
 	meadowRoom();
 }
@@ -448,7 +449,7 @@ async function lockedRoom() {
 
 	if (acceptableSouthCommands.includes(userAnswer) && trollInv.includes(goldCoin)) {
 		// this is not working
-		console.log('You now enter a cave with a portal to the south, the portal sucks you through a vortex that you feel pulling at your very DNA and in a sudden snap you awaken back at your computer and desk..... was it a dream?');
+		console.log('You now enter a cave with a portal to the south');
 		finalRoom();
 	} else if (acceptableNorthCommands.includes(userAnswer)) {
 		console.log('You come to a grassy field, it is all but empty besides a well.');
@@ -508,7 +509,7 @@ async function finalRoom() {
 		return lockedRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
 		console.log(
-			'The protal has taken you back to your desk. Congratulations you made it through the game. You win!!!!'
+			'The portal sucks you through a vortex that you feel pulling at your very DNA...\n.. You see the words: CONGRATULATIONS!!! You win the game!!!\n...and in a sudden snap you awaken back at your computer and desk..... was it a dream?'
 		);
 		process.exit();
 	} else if (acceptableEastCommands.includes(userAnswer) || acceptableWestCommands.includes(userAnswer)) {
