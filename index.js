@@ -11,6 +11,7 @@ start();
 
 let playerInventory = [];
 
+
 class Item {
 	constructor(item, description, collectable) {
 		// may need to include an action or description
@@ -83,52 +84,67 @@ async function riverRoom() {
 	}
 }
 
-lakeRoomInv = { stick: stick };
+lakeRoomInv = [stick]
 async function lakeRoom() {
 	roomInv = lakeRoomInv;
+
+  for(let items of roomInv){
+    collectedItem = items}
+
+    for (let items of playerInventory){
+      droppableItems = items}
+    
 	let userAnswer = await ask('_');
-	if (userAnswer === 'look around' && Object.keys(lakeRoomInv).length !== 0) {
-		let investigate = Object.keys(lakeRoomInv);
+	if (userAnswer === 'look around' && lakeRoomInv.length !== 0) {
 		console.log('You are in a clearing with a small lake\n');
-		console.log(`You see a ${investigate}\n`);
+		console.log(`You see a ${collectedItem.item}`)
 		return lakeRoom();
-	} else if (Object.keys(lakeRoomInv).length === 0 && userAnswer === 'look around') {
+	} else if (roomInv.length === 0 && userAnswer === 'look around') {
 		console.log('You are in a clearing with a small lake\n');
 		console.log("There's nothing here..");
 		return lakeRoom();
-	}
 
-	if (userAnswer === 'take' || userAnswer === 'add') {
+  } else if (userAnswer === 'take' || userAnswer === 'add') {
 		let userAnswer = await ask('take what?\n_');
-		if (userAnswer === 'stick') {
-			stick.take();
-			delete lakeRoomInv.stick;
-			return lakeRoom();
+		if (collectedItem.item.includes(userAnswer)) {
+      roomInv.splice(roomInv.indexOf(collectedItem))
+      playerInventory.push(collectedItem)
+      console.log(`You collected a ${collectedItem.item}!`)
+      return lakeRoom()
 		}
-	} else if (userAnswer === 'drink') {
+  } else if (userAnswer === 'drop') {
+		let userAnswer = await ask('drop what?\n_');
+		if (droppableItems.item.includes(userAnswer)) {
+			playerInventory.splice(playerInventory.indexOf(droppableItems));
+			roomInv.push(droppableItems)
+			console.log(playerInventory);
+      return lakeRoom()
+    } else {
+      console.log("I can't...")}
+  
+  } else if (userAnswer === 'drink') {
 		console.log('The water is tainted and made you ill. You died, loser!');
 		process.exit();
-	} else if (userAnswer === 'i') {
-		console.log(playerInventory);
+	} else if (userAnswer === 'i' && playerInventory.length > 0){
+		console.log(droppableItems.item)
 		return lakeRoom();
-	} else if (userAnswer === 'w') {
+  
+  }else if (userAnswer === 'i' && playerInventory.length <= 0){
+    console.log("Empty")
+    return lakeRoom()
+	
+  }else if (userAnswer === 'w') {
 		console.log('You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree.');
 		puzzleRoom();
-	} else if (userAnswer === 's') {
+	
+  } else if (userAnswer === 's') {
 		meadowRoom();
-	} else if (userAnswer === 'drop') {
-		let userAnswer = await ask('drop what?');
-		if (playerInventory.includes(userAnswer)) {
-			playerInventory.splice(playerInventory.indexOf(userAnswer));
-			lakeRoomInv[userAnswer] = userAnswer
-			console.log(playerInventory);
-		} else {
-      console.log("I can't...")
-		}
-	} else if (userAnswer === 'n' || userAnswer === 'e') {
+
+  } else if (userAnswer === 'n' || userAnswer === 'e') {
 		console.log('I cant go that way..\n');
 		return lakeRoom();
-	} else console.log("I'm unsure of what you mean...");
+	
+  } else console.log("I'm unsure of what you mean...");
 	return lakeRoom();
 }
 
@@ -271,6 +287,7 @@ async function lockedRoom() {
   return lockedRoom();
 }
 
+finalRoomInv = {}
 async function finalRoom() {
   userAnswer = await ask("_");
   if (userAnswer === "n") {
