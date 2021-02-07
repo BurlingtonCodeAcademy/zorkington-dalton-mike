@@ -84,7 +84,7 @@ let deadEndRoomDescription = 'You now stand at the edge of a giant cliff.';
 let wellRoomDescription = 'You are in a field with a well.';
 let lockedRoomDescription =
 	'You now come to a gate, guarded by a troll. The troll will not let you pass, unless he is paid off.';
-let endRoomDescription =
+let finalRoomDescription =
 	'You are in a cave. There is a portal to the south, which appears to lead home, but not much else.';
 
 class Item {
@@ -113,7 +113,7 @@ let acceptableLookCommands = ['scan', 'look around', 'LOOK', 'LOOK AROUND', 'loo
 
 async function start() {
 	console.log(
-		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use and item enter "use item name", for example "use stick".`
+		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers. To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick".`
 	);
 	meadowRoom();
 }
@@ -395,7 +395,7 @@ async function wellRoom() {
 		console.log("I can't go that.\n");
 	} else if (
 		(acceptableTakeCommands.includes(userAnswer) && wellRoomInv.includes(goldCoin)) ||
-		(userAnswer === 'add' && wellRoomInv.includes(goldCoin))
+		(userAnswer === "add" && wellRoomInv.includes(goldCoin))
 	) {
 		console.log(
 			'There appears to be some gold at the bottom of the well but you will need to use a bucket to get it.'
@@ -433,7 +433,6 @@ async function lockedRoom() {
 	for (let items of playerInventory) {
 		droppableItems = items;
 	}
-
 
 	if (userAnswer === 'look around') {
 		lookAround();
@@ -480,7 +479,6 @@ async function lockedRoom() {
 
 finalRoomInv = [];
 async function finalRoom() {
-	userAnswer = await ask('_');
 	userAnswer = await ask('_');
 	roomInv = finalRoomInv;
 	roomDescription = finalRoomDescription;
