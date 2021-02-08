@@ -143,6 +143,7 @@ async function start() {
 	meadowRoom();
 }
 
+//-----meadow room/starting room function---//
 meadowRoomInv = [rock, stick]; //keeping the array outside the function allows it to stay persistent throughout room travel
 async function meadowRoom() {
 	let userAnswer = await ask('_');
@@ -181,7 +182,7 @@ async function meadowRoom() {
 		return meadowRoom();
 	}
 }
-
+//----river room function----//
 riverRoomInv = [];
 async function riverRoom() {
 	roomInv = riverRoomInv;
@@ -222,6 +223,7 @@ async function riverRoom() {
 	}
 }
 
+//---lake room function---//
 lakeRoomInv = [stick];
 async function lakeRoom() {
 	let userAnswer = await ask('_');
@@ -359,7 +361,7 @@ async function deadEndRoom() {
 		return deadEndRoom();
 	}
 }
-
+//---- well room function---//
 wellRoomInv = [goldCoin];
 async function wellRoom() {
 	userAnswer = await ask('_');
@@ -417,7 +419,7 @@ async function wellRoom() {
 		return wellRoom();
 	}
 }
-
+//----locked room---//
 lockedRoomInv = [];
 trollInv = [];
 async function lockedRoom() {
@@ -429,10 +431,7 @@ async function lockedRoom() {
 	if (userAnswer === 'look around') {
 		lookAround();
 		return lockedRoom();
-	}
-
-	if (acceptableSouthCommands.includes(userAnswer) && trollInv.includes(goldCoin)) {
-		// this is not working
+	} else if (acceptableSouthCommands.includes(userAnswer) && trollInv.includes(goldCoin)) {
 		console.log('You now enter a cave with a portal to the south');
 		finalRoom();
 	} else if (acceptableNorthCommands.includes(userAnswer)) {
@@ -473,7 +472,7 @@ async function lockedRoom() {
 		return lockedRoom();
 	}
 }
-
+//------final room---//
 finalRoomInv = [];
 async function finalRoom() {
 	userAnswer = await ask('_');
