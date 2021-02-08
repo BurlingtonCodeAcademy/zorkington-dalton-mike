@@ -7,8 +7,6 @@ function ask(questionText) {
 	});
 }
 
-start();
-
 let playerInventory = [];
 
 //assigning variables as undefined in order to make global functions out of the scope of the room's
@@ -20,15 +18,17 @@ roomItems = undefined;
 
 /*-----------global take function that will remove item from the room's inventory and place it into the players inventory*/
 let take = function (userAnswer) {
-	if (immovableItemsTable.includes(userAnswer)) {
+	if (roomInv.length <= 0) {
+		console.log("There's nothing here...");
+	} else if (immovableItemsTable.includes(userAnswer)) {
 		console.log(`I cant take this...${userAnswer}`);
 	} else if (roomInv.length > 0 && collectedItem.item === userAnswer) {
 		roomInv.splice(roomInv.indexOf(collectedItem));
 		playerInventory.push(collectedItem);
 		console.log(`You collected a ${collectedItem.item}!`);
-	} else if (roomInv.length === 0) {
-		console.log("There's nothing here...");
-	}
+	} else {
+    console.log("I don't know what you want...")
+  }
 };
 
 /*-------------global drop function that will remove item from players inventory and drop it into the rooms inventory-------------------*/
@@ -79,7 +79,7 @@ let riverRoomDescription = 'There is massive river, obstructing all movement exc
 let meadowRoomDescription =
 	'A foreboding mountain lies to the East and West. A path cuts through the woods to the north, and there is the sound of a river to the south\n';
 let puzzleRoomDescription =
-	'You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree, it appears to be a bucket.';
+	'You come to a forrest. It is shady aside from some slivers of light breaking through the leaves.';
 let deadEndRoomDescription = 'You now stand at the edge of a giant cliff.';
 let wellRoomDescription = 'You are in a field with a well.';
 let lockedRoomDescription =
@@ -103,18 +103,26 @@ let rock = new Item('rock', 'this rock is too heavy to lift', false);
 
 let goldCoin = new Item('gold coin', 'could be used to pay someone off', true);
 
-immovableItemsTable = ['rock'];
+immovableItemsTable = ['rock', "gold coin"];
 let acceptableNorthCommands = ['n', 'N', 'North', 'NORTH'];
 let acceptableSouthCommands = ['s', 'S', 'South', 'SOUTH'];
 let acceptableEastCommands = ['e', 'E', 'east', 'EAST'];
 let acceptableWestCommands = ['w', 'W', 'West', 'WEST'];
 let acceptableTakeCommands = ['take', 'Take', 'TAKE'];
 let acceptableLookCommands = ['scan', 'look around', 'LOOK', 'LOOK AROUND', 'look'];
-
+start();
 async function start() {
 	console.log(
-		`You fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.... 
-    \nnext to you is a sign that reads: To move north enter "n", south "s", west "w", and east "e". To add an item to your inventory enter "take" and then enter the item's name, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick". To drop an item enter "drop" and then item name when prompted.`
+		`\nYou fell asleep at your computer and woke up in a empty meadow scattered with wild flowers.... 
+    \nnext to you is a sign that reads: To move north enter ${acceptableNorthCommands.join(
+		' or '
+	)}, south: ${acceptableSouthCommands.join(' or ')}, west ${acceptableWestCommands.join(
+			' or '
+		)}, and east ${acceptableEastCommands.join(
+			' or '
+		)}. To add an item to your inventory enter ${acceptableTakeCommands.join(
+			' or '
+		)} and then enter the item's name when prompted, to check your inventory enter "i", to get a description of the room you're in enter "look around", and to use an item enter "use item name", for example "use stick". To drop an item enter "drop" and then item name when prompted.`
 	);
 	meadowRoom();
 }
@@ -122,8 +130,8 @@ async function start() {
 meadowRoomInv = [rock, stick]; //keeping the array outside the function allows it to stay persistent throughout room travel
 async function meadowRoom() {
 	let userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = meadowRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = meadowRoomInv;
 	roomDescription = meadowRoomDescription;
 
 	for (let roomItems of roomInv) {
@@ -151,7 +159,8 @@ async function meadowRoom() {
 		take(userAnswer);
 		return meadowRoom();
 	} else if (userAnswer === 'drop') {
-		drop();
+		let userAnswer = await ask('drop what?\n_');
+		drop(userAnswer);
 		return meadowRoom();
 	} else if (userAnswer === 'i') {
 		checkInventory();
@@ -178,7 +187,7 @@ async function riverRoom() {
 		droppableItems = items;
 	}
 	userAnswer = await ask('_');
-  userAnswer = userAnswer.trim(" ")
+	userAnswer = userAnswer.trim(' ');
 	if (
 		acceptableSouthCommands.includes(userAnswer) ||
 		acceptableEastCommands.includes(userAnswer) ||
@@ -193,12 +202,16 @@ async function riverRoom() {
 		lookAround();
 		return riverRoom();
 	} else if (acceptableTakeCommands.includes(userAnswer)) {
-		take();
-		return riverRoom();
+		let userAnswer = await ask('take what?\n_');
+		take(userAnswer);
+		riverRoom();
 	} else if (userAnswer === 'i') {
 		checkInventory();
+		riverRoom();
 	} else if (userAnswer === 'drop') {
-		drop();
+		let userAnswer = await ask('drop what?\n_');
+		drop(userAnswer);
+		riverRoom();
 	} else if (userAnswer === 'use stick' || userAnswer === 'use gold coin' || userAnswer === 'use bucket') {
 		console.log('That item is of no use in this area');
 		return riverRoom();
@@ -211,8 +224,8 @@ async function riverRoom() {
 lakeRoomInv = [stick];
 async function lakeRoom() {
 	let userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = lakeRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = lakeRoomInv;
 	roomDescription = lakeRoomDescription;
 
 	for (let items of roomInv) {
@@ -223,7 +236,7 @@ async function lakeRoom() {
 		droppableItems = items;
 	}
 
-  if (acceptableLookCommands.includes(userAnswer)) {
+	if (acceptableLookCommands.includes(userAnswer)) {
 		lookAround();
 		return lakeRoom();
 	} else if (userAnswer === 'drink') {
@@ -232,10 +245,11 @@ async function lakeRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return lakeRoom();
+	} else if (acceptableWestCommands.includes(userAnswer) && puzzleRoomInv.includes(bucket)) {
+		console.log('You come to a forest. It is shady, but something seems to be shimmering behind a tree');
+		puzzleRoom();
 	} else if (acceptableWestCommands.includes(userAnswer)) {
-		console.log(
-			'You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree, it appears to be a bucket.'
-		);
+		console.log('you come to a forest. It is shady..');
 		puzzleRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
 		console.log('You are back in the meadow you woke up in.');
@@ -263,11 +277,12 @@ async function lakeRoom() {
 	}
 }
 
+// ----puzzle Room function-----//
 puzzleRoomInv = [bucket];
 async function puzzleRoom() {
 	userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = puzzleRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = puzzleRoomInv;
 	roomDescription = puzzleRoomDescription;
 
 	for (let items of roomInv) {
@@ -277,15 +292,17 @@ async function puzzleRoom() {
 	for (let items of playerInventory) {
 		droppableItems = items;
 	}
-	if (acceptableLookCommands.includes(userAnswer)) {
+	if (acceptableLookCommands.includes(userAnswer) && roomInv.length === 0) {
 		lookAround();
 		return puzzleRoom();
-	}
-	if (acceptableNorthCommands.includes(userAnswer)) {
+	} else if (acceptableLookCommands.includes(userAnswer) && roomInv.includes(bucket)) {
+		console.log('something seems to be shimmering behind a nearby tree, it appears to be a bucket.');
+    return puzzleRoom()
+	} else if (acceptableNorthCommands.includes(userAnswer)) {
 		console.log('You now stand at the edge of a giant cliff.');
 		deadEndRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
-		console.log('You come to a grassy field, it is all but empty besides a well.');
+		console.log("You come to a grassy field, it's all but empty besides a well.");
 		wellRoom();
 	} else if (acceptableEastCommands.includes(userAnswer)) {
 		lakeRoom();
@@ -316,8 +333,8 @@ async function puzzleRoom() {
 deadEndRoomInv = [rock];
 async function deadEndRoom() {
 	userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = deadEndRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = deadEndRoomInv;
 	roomDescription = deadEndRoomDescription;
 
 	for (let items of roomInv) {
@@ -332,14 +349,16 @@ async function deadEndRoom() {
 		return deadEndRoom();
 	} else if (
 		acceptableNorthCommands.includes(userAnswer) ||
-		acceptableEastCommands.includes(userAnswer) || acceptableWestCommands.includes(userAnswer)
+		acceptableEastCommands.includes(userAnswer) ||
+		acceptableWestCommands.includes(userAnswer)
 	) {
 		console.log('There is nothing that way but certain death...');
-    return deadEndRoom()
+		return deadEndRoom();
+	} else if (acceptableWestCommands.includes(userAnswer) && puzzleRoomInv.includes(bucket)) {
+		console.log('You come to a forest. It is shady, but something seems to be shimmering behind a tree');
+		puzzleRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
-		console.log(
-			'You come to a forrest. It is shady, but something seems to be shimmering behind a nearby tree, it appears to be a bucket.".'
-		);
+		console.log('you come to a forest. It is shady..');
 		puzzleRoom();
 	} else if (acceptableTakeCommands.includes(userAnswer)) {
 		let userAnswer = await ask('take what?\n_');
@@ -364,8 +383,8 @@ async function deadEndRoom() {
 wellRoomInv = [goldCoin];
 async function wellRoom() {
 	userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = wellRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = wellRoomInv;
 	roomDescription = wellRoomDescription;
 
 	for (let items of roomInv) {
@@ -375,23 +394,29 @@ async function wellRoom() {
 	for (let items of playerInventory) {
 		droppableItems = items;
 	}
-	if (acceptableLookCommands.includes(userAnswer)) {
+	 if (
+		(acceptableLookCommands.includes(userAnswer) && wellRoomInv.includes(goldCoin))
+	) {
+		console.log(
+			'There appears to be some gold at the bottom of the well but you will need to use a bucket to get it.'
+		);
+		return wellRoom();  
+  }else if (acceptableLookCommands.includes(userAnswer)) {
 		lookAround();
 		return wellRoom();
-	}
-	if (userAnswer === 'use bucket' && playerInventory.includes(bucket)) {
-		console.log('You attach the bucket to the well and send it down');
-		userAnswer = await ask('You see a gold coin!\n_');
-		if (acceptableTakeCommands.includes(userAnswer)) {
-			userAnswer = await ask('take what?\n_');
-			take(userAnswer);
-			return wellRoom();
-		} else {
-			console.log("I don't know what you mean...");
-			return wellRoom();
-		}
-	} else if (acceptableLookCommands.includes(userAnswer)) {
-		console.log('You enter forest...');
+  } else if (userAnswer === 'use bucket' && playerInventory.includes(bucket)) {
+		console.log('You attach the bucket to the well and send it down\n You pulled up a gold coin!');
+		playerInventory.push(goldCoin)
+    console.log('You collected a gold coin!')
+		return wellRoom();
+  }else if (acceptableTakeCommands.includes(userAnswer)) {
+    userAnswer = await ask('take what?\n_');
+    take(userAnswer);
+	} else if (acceptableWestCommands.includes(userAnswer) && puzzleRoomInv.includes(bucket)) {
+		console.log('You come to a forest. It is shady, but something seems to be shimmering behind a tree');goldCoin
+		puzzleRoom();
+	} else if (acceptableWestCommands.includes(userAnswer)) {
+		console.log('you come to a forest. It is shady..');
 		puzzleRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer)) {
 		console.log(
@@ -399,17 +424,14 @@ async function wellRoom() {
 		);
 		lockedRoom();
 	} else if (acceptableEastCommands.includes(userAnswer) || acceptableWestCommands.includes(userAnswer)) {
-		console.log("I can't go that.\n");
-	} else if (
-		(acceptableTakeCommands.includes(userAnswer) && wellRoomInv.includes(goldCoin)) ||
-		(userAnswer === "add" && wellRoomInv.includes(goldCoin))
-	) {
-		console.log(
-			'There appears to be some gold at the bottom of the well but you will need to use a bucket to get it.'
-		);
+		console.log("I can't go that way.\n");
+	} else if (acceptableTakeCommands.includes(userAnswer) && wellRoomInv.length === 0) {
+		console.log("There's nothing here.");
+    return wellRoom()
+	} else if (acceptableTakeCommands.includes(userAnswer)) {
+		let userAnswer = await ask('take what?\n_');
+		take(userAnswer);
 		return wellRoom();
-	} else if (acceptableTakeCommands.includes(userAnswer) && wellRoomInv === 0) {
-		console.log("There's nothing here."); //may cause some problems if an item is dropped in this room
 	} else if (userAnswer === 'drop') {
 		let userAnswer = await ask('drop what?\n_');
 		drop(userAnswer);
@@ -417,9 +439,9 @@ async function wellRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return wellRoom();
-	} else if (userAnswer === "use stick" || userAnswer === "use gold coin") {
-		console.log("That item is of no use in this area")
-		return wellRoom()
+	} else if (userAnswer === 'use stick' || userAnswer === 'use gold coin') {
+		console.log('That item is of no use in this area');
+		return wellRoom();
 	} else {
 		console.log("I don't know what you mean");
 		return wellRoom();
@@ -430,8 +452,8 @@ lockedRoomInv = [];
 trollInv = [];
 async function lockedRoom() {
 	userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = lockedRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = lockedRoomInv;
 	roomDescription = lockedRoomDescription;
 
 	for (let items of roomInv) {
@@ -460,9 +482,10 @@ async function lockedRoom() {
 		trollInv.push(goldCoin);
 		delete playerInventory.goldCoin;
 		return lockedRoom();
-	} else if 
-		(userAnswer === 'use stick' && playerInventory.includes(stick) ||
-		userAnswer === 'use bucket' && playerInventory.includes(bucket)) {
+	} else if (
+		(userAnswer === 'use stick' && playerInventory.includes(stick)) ||
+		(userAnswer === 'use bucket' && playerInventory.includes(bucket))
+	) {
 		console.log('The troll only accepts gold!!!');
 		return lockedRoom();
 	} else if (acceptableSouthCommands.includes(userAnswer) && !trollInv.includes(goldCoin)) {
@@ -479,6 +502,10 @@ async function lockedRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return lockedRoom();
+	} else if (userAnswer === 'drop') {
+		let userAnswer = await ask('drop what?\n_');
+		drop(userAnswer);
+		return lockedRoom();
 	} else {
 		console.log("I don't know what you mean...");
 		return lockedRoom();
@@ -488,8 +515,8 @@ async function lockedRoom() {
 finalRoomInv = [];
 async function finalRoom() {
 	userAnswer = await ask('_');
-	userAnswer = userAnswer.trim(" ")
-  roomInv = finalRoomInv;
+	userAnswer = userAnswer.trim(' ');
+	roomInv = finalRoomInv;
 	roomDescription = finalRoomDescription;
 
 	for (let items of roomInv) {
@@ -523,11 +550,13 @@ async function finalRoom() {
 	} else if (userAnswer === 'i') {
 		checkInventory();
 		return finalRoom();
-	} else if (userAnswer === "use stick" || userAnswer === "use gold coin" || userAnswer === "use bucket") {
-		console.log("That item is of no use in this area")
+	} else if (userAnswer === 'use stick' || userAnswer === 'use gold coin' || userAnswer === 'use bucket') {
+		console.log('That item is of no use in this area');
 		return finalRoom(); //would be nice to create a function for "use" but hard coding works for now (super redundant though)
-	}
-	else {
+	} else if (userAnswer === 'drop') {
+		let userAnswer = await ask('drop what?\n_');
+		drop(userAnswer);
+	} else {
 		console.log("I'm not sure what you mean...");
 		return finalRoom();
 	}
